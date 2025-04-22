@@ -6,7 +6,7 @@ use csv::Writer;
 use std::fs::File;
 
 
-#[derive(Debug, Deserialize)]
+#[derive(Debug, Deserialize, Clone)]
 struct EMGSample {
     time: f32,
     emg: f32,
@@ -55,13 +55,13 @@ impl EMGReader {
         Self { samples, index: 0 }
     }
 
-    fn next_value(&mut self) -> f32 {
+    fn next_sample(&mut self) -> Option<EMGSample> {
         if self.index < self.samples.len() {
-            let value = self.samples[self.index].emg;
+            let sample = self.samples[self.index].clone();
             self.index += 1;
-            value
+            Some(sample)
         } else {
-            0.0  // Default EMG value after end of file
+            None
         }
     }
 }
@@ -134,15 +134,26 @@ fn main() {
     let mut emg_reader = EMGReader::from_csv("emg_data\\emg.csv");
     let mut simulated_data = Vec::new();
 
-    // Simulate EMG pattern: open 0 - 199, close 200 - 399, repeat
-    for step in 0..600 {
-         // Then inside your loop:
-        let emg_sim_value = emg_reader.next_value();
+    const max_angle: f32 = 0.5; // Maximum angle for the claw 
+    const deadzone:f32 = 0.1; // Deadzone for EMG signal
+    let mut last_time = 0.0; // Define last time
+
+    // Simulate EMG pattern: 
+    while let Some(sample) = emg_reader.next_sample() {
+        let delta = sample.time - last_time;
+        std::thread::sleep(std::time::Duration::from_secs_f32(delta));
+
+        last_time = sample.time;
+        let emg_sim_value = sample.emg;
 
         //let emg_sim_value = if (step / 200) % 2 == 0 { 0.05 } else { 0.3 };
         
         // Simple threshold classifier
-        let target_angle = if emg_sim_value > 0.2 { 0.5 } else { -0.5 };
+        //let target_angle = if emg_sim_value > 0.2 { 0.5 } else { -0.5 };
+        let target_angle = if emg_sim_value > deadzone {emg_sim_value * max_angle} 
+            else if emg_sim_value < -deadzone { -emg_sim_value * max_angle }
+            else {0.0}; // Adding dead zone and proportional control
+
         left_ctrl.set_target(target_angle);
         right_ctrl.set_target(-target_angle); // Mirror angle
 
@@ -224,12 +235,12 @@ fn main() {
         let left_angle = bodies[left_claw_handle].position().rotation.angle();
         let right_angle = bodies[right_claw_handle].position().rotation.angle();
         println!(
-            "Step {:>3} | EMG: {:.2} | Left: {:.2} rad | Right: {:.2} rad",
-            step, emg_sim_value, left_angle, right_angle
+            "time {:>3} | EMG: {:.2} | Left: {:.2} rad | Right: {:.2} rad",
+            sample.time, emg_sim_value, left_angle, right_angle
         );
 
         simulated_data.push(EMGOutput {
-            time: step as f32 * 0.01, // Assuming each step is 10ms
+            time: sample.time, // Assuming each step is 10ms
             emg: emg_sim_value,
             left: left_angle,
             right: right_angle,
