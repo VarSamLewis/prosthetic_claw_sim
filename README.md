@@ -23,24 +23,29 @@ This simulation is a stepping stone toward embedding EMG-driven logic into real-
 
 ## 📁 Structure
 
-- `main.rs` – The main simulation loop in Rust.
-- `emg_data/` – Contains input and output `.csv` files for EMG signals and claw motion.
-- `notebooks/` – Contains Python notebooks for data simulation and visualization (animation, plotting, etc.)
-
----
-
-## ⚠ Known Issues
-
-- The `create_simulation` animation notebook currently raises an error. This is not critical — it’s used only for visualization and doesn't impact core simulation logic.
+- `main.rs` – Main simulation loop. Handles physics, time stepping, and logging.
+- `src/utils/`
+  - `csv.rs` – Contains `EMGReader` for reading EMG signals and a CSV writer.
+  - `control.rs` – Contains the control system logic (proportional + deadzone).
+  - `mod.rs` – Re-exports modules for easier use.
+- `emg_data/` – Input/output `.csv` files for EMG signals and claw movement.
+- `notebooks/` – Python notebooks for generating EMG data and visualizing outputs.
 
 ---
 
 ## ✅ Features
 
-- Uses **Simulated EMG signals**
-- Basic **proportional control** for joint actuation
-- CSV logging for integration with plotting or ML
-- Supports **time-based playback** to simulate real-time EMG input
+- Uses **simulated EMG signals**
+- Supports **proportional control** with deadzone
+- Time-stepped **physics simulation** (via `rapier2d`)
+- Exports results for plotting or model training
+- Modular architecture — easy to swap or test different control systems
+
+---
+
+## ⚠ Known Issues
+
+- The `create_simulation.ipynb` animation notebook currently raises an error. This is not critical — it is for visualization only and does not impact the simulation logic.
 
 ---
 
@@ -50,10 +55,10 @@ This simulation is a stepping stone toward embedding EMG-driven logic into real-
 - [ ] Convert notebooks into `.py` scripts for reproducibility
 - [ ] Add a `Dockerfile` for cross-platform deployment
 - [ ] Add GitHub Actions for CI
-- [ ] Add damping to the control logic (PD controller)
+- [ ] Add damping to the control logic (e.g., PD controller)
 - [ ] Investigate additional EMG signal smoothing techniques
 - [ ] Add unit testing to the Rust control logic
-- [ ] Refactor Rust into modules for better structure and readability
+- [ ] Finalize modularization: separate out `csv` and `control` utils for swapping/testing multiple controllers
 
 ---
 
