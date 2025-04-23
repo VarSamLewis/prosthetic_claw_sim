@@ -1,29 +1,14 @@
+﻿mod utils {
+    pub mod csv;
+    pub mod control;
+}
+
+
 use rapier2d::prelude::*;
-use serde::Deserialize;
-use serde::Serialize;
-use std::path::Path;
-use csv::Writer;
-use std::fs::File;
 
+use utils::csv::{EMGReader, EMGOutput, write_emg_to_csv};
+use utils::control::control_1;
 
-#[derive(Debug, Deserialize, Clone)]
-struct EMGSample {
-    time: f32,
-    emg: f32,
-}
-
-#[derive(Debug, Serialize)]
-struct EMGOutput {
-    time: f32,
-    emg: f32,
-    left: f32,
-    right: f32,
-}
-
-struct EMGReader {
-    samples: Vec<EMGSample>,
-    index: usize,
-}
 
 struct ClawController {
     kp: f32,
@@ -44,41 +29,8 @@ impl ClawController {
     }
 }
 
-impl EMGReader {
-    fn from_csv<P: AsRef<Path>>(path: P) -> Self {
-        let mut rdr = csv::Reader::from_path(path).expect("Cannot open CSV file");
-        let mut samples = Vec::new();
-        for result in rdr.deserialize() {
-            let record: EMGSample = result.expect("Error reading row");
-            samples.push(record);
-        }
-        Self { samples, index: 0 }
-    }
-
-    fn next_sample(&mut self) -> Option<EMGSample> {
-        if self.index < self.samples.len() {
-            let sample = self.samples[self.index].clone();
-            self.index += 1;
-            Some(sample)
-        } else {
-            None
-        }
-    }
-}
-
-fn write_emg_to_csv(path: &str, data: &[EMGOutput]) {
-    let file = File::create(path).expect("Cannot create file");
-    let mut wtr = Writer::from_writer(file);
-
-    for row in data {
-        wtr.serialize(row).expect("Failed to write row");
-    }
-
-    wtr.flush().expect("Failed to flush writer");
-}
-
 fn main() {
-    // Set up the physics world
+    // Set up the physics world, was taken from online
     let gravity = vector![0.0, 0.0]; // No gravity, just joints
     let mut physics_pipeline = PhysicsPipeline::new();
     let mut bodies = RigidBodySet::new();
@@ -134,8 +86,8 @@ fn main() {
     let mut emg_reader = EMGReader::from_csv("emg_data\\emg.csv");
     let mut simulated_data = Vec::new();
 
-    const max_angle: f32 = 0.5; // Maximum angle for the claw 
-    const deadzone:f32 = 0.1; // Deadzone for EMG signal
+    let controller = control_1::new(0.5, 0.1);
+    
     let mut last_time = 0.0; // Define last time
 
     // Simulate EMG pattern: 
@@ -150,9 +102,13 @@ fn main() {
         
         // Simple threshold classifier
         //let target_angle = if emg_sim_value > 0.2 { 0.5 } else { -0.5 };
+        /*
         let target_angle = if emg_sim_value > deadzone {emg_sim_value * max_angle} 
             else if emg_sim_value < -deadzone { -emg_sim_value * max_angle }
             else {0.0}; // Adding dead zone and proportional control
+        */
+        // Call control mechanism to calculate angles
+        let target_angle = controller.compute_target_angle(emg_sim_value);
 
         left_ctrl.set_target(target_angle);
         right_ctrl.set_target(-target_angle); // Mirror angle
@@ -170,8 +126,6 @@ fn main() {
             right_body.apply_torque_impulse(torque, true);
         }
 
-        // Simple threshold classifier
-        let target_angle = if emg_sim_value > 0.2 { 0.5 } else { -0.5 };
         left_ctrl.set_target(target_angle);
         right_ctrl.set_target(-target_angle); // Mirror angle
 
@@ -189,33 +143,9 @@ fn main() {
         }
         
 
-    // Simulate
-    /*
-    for step in 0..1000 {
-        // --- Control Section ---
-        // (Simulate EMG input: every 200 steps, toggle open/close)
-        let closing = (step / 200) % 2 == 1;
-
-        if closing {
-            if let Some(left) = bodies.get_mut(left_claw_handle) {
-                left.apply_torque_impulse(10.0, true);
-            }
-            if let Some(right) = bodies.get_mut(right_claw_handle) {
-                right.apply_torque_impulse(-10.0, true);
-            }
-        } else {
-            if let Some(left) = bodies.get_mut(left_claw_handle) {
-                left.apply_torque_impulse(-10.0, true);
-            }
-            if let Some(right) = bodies.get_mut(right_claw_handle) {
-                right.apply_torque_impulse(10.0, true);
-            }
-        }
-        */
-
           let mut multibody_joint_set = MultibodyJointSet::new(); // Add this
 
-    // Step the simulation
+        // Step the simulation
         physics_pipeline.step(
             &gravity,
             &integration_parameters,
