@@ -83,7 +83,7 @@ fn main() {
     let mut left_ctrl = ClawController::new(10.0);
     let mut right_ctrl = ClawController::new(10.0);
 
-    let mut emg_reader = EMGReader::from_csv("emg_data\\emg.csv");
+    let mut emg_reader = EMGReader::from_csv::<&str>(None);
     let mut simulated_data = Vec::new();
 
     let controller = control_1::new(0.5, 0.1);
