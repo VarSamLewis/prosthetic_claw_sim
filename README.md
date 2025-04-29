@@ -40,6 +40,7 @@ This simulation is a stepping stone toward embedding EMG-driven logic into real-
 - Time-stepped **physics simulation** (via `rapier2d`)
 - Exports results for plotting or model training
 - Modular architecture — easy to swap or test different control systems
+- Has a workflow that auto checks cargo build and cargo test on all pushes and pulls to main
 
 ---
 
