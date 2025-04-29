@@ -1,0 +1,27 @@
+name: Lint Suggestions
+
+on:
+  pull_request:
+    branches: ["**"]  # all branches
+
+jobs:
+  suggest-linting:
+    name: Suggest Formatting and Lint Fixes
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          components: clippy, rustfmt
+          profile: minimal
+          override: true
+
+      - name: Show formatting suggestions
+        run: cargo fmt -- --check || echo "💡 Run 'cargo fmt' to fix formatting"
+
+      - name: Run clippy (non-blocking)
+        run: cargo clippy || echo "💡 Clippy found warnings; consider fixing them"
