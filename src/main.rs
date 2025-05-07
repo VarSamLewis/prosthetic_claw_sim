@@ -7,7 +7,7 @@
 use rapier2d::prelude::*;
 
 use utils::csv::{EMGReader, EMGOutput, write_emg_to_csv};
-use utils::control::control_1;
+use utils::control::{Control1, Control2};
 
 
 struct ClawController {
@@ -86,7 +86,8 @@ fn main() {
     let mut emg_reader = EMGReader::from_csv::<&str>(None);
     let mut simulated_data = Vec::new();
 
-    let controller = control_1::new(0.5, 0.1);
+    //let controller = control_1::new(0.5, 0.1);
+    let mut controller = Control2::new(0.5, 0.1, 0.5);
     
     let mut last_time = 0.0; // Define last time
 
@@ -98,16 +99,9 @@ fn main() {
         last_time = sample.time;
         let emg_sim_value = sample.emg;
 
-        //let emg_sim_value = if (step / 200) % 2 == 0 { 0.05 } else { 0.3 };
-        
-        // Simple threshold classifier
-        //let target_angle = if emg_sim_value > 0.2 { 0.5 } else { -0.5 };
-        /*
-        let target_angle = if emg_sim_value > deadzone {emg_sim_value * max_angle} 
-            else if emg_sim_value < -deadzone { -emg_sim_value * max_angle }
-            else {0.0}; // Adding dead zone and proportional control
-        */
-        // Call control mechanism to calculate angles
+
+        //let target_angle = controller.compute_target_angle(emg_sim_value);
+
         let target_angle = controller.compute_target_angle(emg_sim_value);
 
         left_ctrl.set_target(target_angle);

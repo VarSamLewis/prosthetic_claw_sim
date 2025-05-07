@@ -30,22 +30,42 @@ def validate_data(df: pd.DataFrame) -> None:
 
 
 # --- Static plots ---
-def visualise_data(df: pd.DataFrame) -> None:
+def visualise_data(
+    df: pd.DataFrame,
+    out_dir: str | None = None,
+    show: bool = True,
+    save_filename: str = "static_plot.png",      # keep png so transparency works
+):
+    if out_dir is None:
+        out_dir = SCRIPT_DIR                    # ← your original default
+    os.makedirs(out_dir, exist_ok=True)
+
     fig, axs = plt.subplots(2, 1, figsize=(12, 10), sharex=True)
     fig.subplots_adjust(hspace=0.4)
 
-    axs[0].plot(df['time'], np.degrees(df['left']), color='blue')
-    axs[0].set_title('Left Claw Angle')
-    axs[0].set_ylabel('Angle (°)')
+    axs[0].plot(df["time"], np.degrees(df["left"]),  color="blue")
+    axs[0].set_title("Left Claw Angle")
+    axs[0].set_ylabel("Angle (°)")
     axs[0].grid(True)
 
-    axs[1].plot(df['time'], np.degrees(df['right']), color='red')
-    axs[1].set_title('Right Claw Angle')
-    axs[1].set_xlabel('Time (s)')
-    axs[1].set_ylabel('Angle (°)')
+    axs[1].plot(df["time"], np.degrees(df["right"]), color="red")
+    axs[1].set_title("Right Claw Angle")
+    axs[1].set_xlabel("Time (s)")
+    axs[1].set_ylabel("Angle (°)")
     axs[1].grid(True)
 
-    plt.show()
+    # --- save to disk -------------------------------------------------------
+    save_path = os.path.join(out_dir, save_filename)
+    fig.savefig(save_path, dpi=300, transparent=True, bbox_inches="tight")
+    print(f"[INFO] static plot saved to {save_path}")
+
+    if show:
+        plt.show()
+    else:
+        plt.close(fig)  # good practice for scripts/batch jobs
+
+    return fig, axs
+
 
 
 # --- Animation setup ---
