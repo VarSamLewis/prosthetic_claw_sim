@@ -46,20 +46,17 @@ This simulation is a stepping stone toward embedding EMG-driven logic into real-
 
 ## ⚠ Known Issues
 
-- The `create_simulation.ipynb` animation notebook currently raises an error. This is not critical — it is for visualization only and does not impact the simulation logic.
-
 ---
 
 ## 📝 TODO
 
-- [ ] Fix the animation notebook
-- [ ] Convert notebooks into `.py` scripts for reproducibility
 - [ ] Add a `Dockerfile` for cross-platform deployment
-- [ ] Add GitHub Actions for CI
-- [ ] Add damping to the control logic (e.g., PD controller)
+- [ ] Add a maximum force to the claw to prevent unrealistic behavior
 - [ ] Investigate additional EMG signal smoothing techniques
-- [ ] Add unit testing to the Rust control logic
-- [ ] Finalize modularization: separate out `csv` and `control` utils for swapping/testing multiple controllers
+- [ ] Look into going from Rapier 2D to ROS for simulation
+- [ ] Try out more complex control algorithms
+- [ ] CAD of the claw
+- [ ] Investigate 3D printing
 
 ---
 
