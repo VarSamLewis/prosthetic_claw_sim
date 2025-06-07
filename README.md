@@ -50,13 +50,14 @@ This simulation is a stepping stone toward embedding EMG-driven logic into real-
 
 ## 📝 TODO
 
-- [ ] Add a `Dockerfile` for cross-platform deployment
+
 - [ ] Add a maximum force to the claw to prevent unrealistic behavior
 - [ ] Investigate additional EMG signal smoothing techniques
-- [ ] Look into going from Rapier 2D to ROS for simulation
 - [ ] Try out more complex control algorithms
+- [ ] Look into going from Rapier 2D to ROS for simulation
+- [ ] Emulate Pi with Docker + QEMU (just for actual proposed control system)
 - [ ] CAD of the claw
-- [ ] Investigate 3D printing
+- [ ] Look into manufacturing techniques
 
 ---
 
