@@ -1,6 +1,7 @@
 ﻿mod utils {
     pub mod csv;
     pub mod control;
+    pub mod eval;
 }
 
 
