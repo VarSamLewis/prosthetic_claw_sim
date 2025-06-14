@@ -51,7 +51,9 @@ This simulation is a stepping stone toward embedding EMG-driven logic into real-
 ## 📝 TODO
 
 
-- [ ] Add a maximum force to the claw to prevent unrealistic behavior
+- [ ] Add a maximum force to the claw to prevent unrealistic/dangerous behavior
+- [ ] Build an evaluation suite so we can evaluate the cpontrol system
+- [ ] Get more accurate EMG data
 - [ ] Investigate additional EMG signal smoothing techniques
 - [ ] Try out more complex control algorithms
 - [ ] Look into going from Rapier 2D to ROS for simulation
