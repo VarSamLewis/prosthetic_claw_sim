@@ -1,8 +1,11 @@
 name: Code Coverage
 
 on:
-  pull_request:
-    branches: [main]
+  workflow_run:
+    workflows: ["Check_Compile"] 
+    types: 
+      - completed
+    branches: ["**"] 
 
 jobs:
   coverage:
