@@ -48,18 +48,47 @@ This simulation is a stepping stone toward embedding EMG-driven logic into real-
 
 ---
 
-## 📝 TODO
+# Next Project Aims for Prosthetic Claw Simulator
 
+---
 
-- [ ] Add a maximum force to the claw to prevent unrealistic/dangerous behavior
-- [ ] Build an evaluation suite so we can evaluate the cpontrol system
-- [ ] Get more accurate EMG data
-- [ ] Investigate additional EMG signal smoothing techniques
-- [ ] Try out more complex control algorithms
-- [ ] Look into going from Rapier 2D to ROS for simulation
-- [ ] Emulate Pi with Docker + QEMU (just for actual proposed control system)
-- [ ] CAD of the claw
-- [ ] Look into manufacturing techniques
+### 1. Obtain and Process More Realistic EMG Signals  
+*Category: Data Collection & Signal Processing*  
+- Source higher-fidelity real EMG datasets or collect your own using reliable EMG sensors.  
+- Experiment with advanced preprocessing (filtering, noise reduction, normalization).  
+- Explore signal augmentation or synthesis techniques to expand training data diversity.
+
+---
+
+### 2. Enhance and Expand the Simulation Environment  
+*Category: Software Development & Simulation*  
+- Upgrade the physics simulation (e.g., move toward 3D or add compliance and damping effects).  
+- Incorporate more detailed muscle-to-motor models for realistic actuation dynamics.  
+- Integrate with ROS or Gazebo for standardized robotics simulation workflows.
+
+---
+
+### 3. Refine Control Algorithms and Performance Metrics  
+*Category: Control Systems & Evaluation*  
+- Implement and compare more advanced control methods (PID, adaptive control, ML-based).  
+- Define and build an evaluation suite with quantitative metrics for accuracy, responsiveness, stability, and safety.  
+- Add safety constraints like maximum force/torque limits and failure handling logic.
+
+---
+
+### 4. Hardware Integration and Embedded Control Implementation  
+*Category: Embedded Systems & Prototyping*  
+- Port control logic to embedded hardware (e.g., microcontrollers like STM32 or Raspberry Pi).  
+- Interface live EMG sensors with hardware ADC inputs.  
+- Develop real-time motor control outputs (PWM, DAC) to drive a physical claw.
+
+---
+
+### 5. Develop Physical Claw Design and Manufacturing Plan  
+*Category: Mechanical Design & Prototyping*  
+- Create CAD models of the claw mechanism with ergonomic and manufacturability considerations.  
+- Select appropriate actuators and sensors to match control requirements.  
+- Explore manufacturing methods (3D printing, CNC machining) and material selection.
 
 ---
 
